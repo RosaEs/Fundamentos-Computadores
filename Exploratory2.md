@@ -1,4 +1,4 @@
-# Análisis de notas de la asignatura Ftos. De Técnología de Computadores
+# Análisis de la notas de la asignatura Ftos. De Técnología de Computadores
 Realizado por Rosa Estriégana Valdehita
 
 ### Introducción
@@ -437,9 +437,9 @@ En la gráfica anterior se aprecia una clara mejoría de las notas del grupo de Si
 
 
 
-### Más Gráficas
-
-Vamos ahora a separar por año para ver las gráficas de calificaciones por año :
+### Calificaciones por año
+> 1. Agrupamos por año
+2. Calculamos los porcentajes por calificaciones de cada año 
 
 ```r
 s <- split(nP1, nP1$AÑO == "2009-10")
@@ -457,11 +457,105 @@ notas1213 <- s$"TRUE"
 
 s <- split(nP1, nP1$AÑO == "2013-14")
 notas1314 <- s$"TRUE"
+notas1314$CALIFIC <- as.factor(notas1314$CALIFIC)
+
+# En el año 13-14 hay 3 grupos por lo que hay que agrupar por calific de
+# nuevo
+notas1314 <- aggregate(TOTAL.CALIF ~ CALIFIC, notas1314, sum)
+notas1314$AÑO <- "2013-14"
+```
+
+# Calculamos los porcentajes de calificaciones por año
+
+```r
+
+calculaPorcentaje <- function(d) {
+    
+    for (i in 1:length(d$TOTAL)) d$Porcentaje[i] <- d$TOTAL.CALIF[i] * 100/sum(d$TOTAL.CALIF)
+    return(d$Porcentaje)
+}
+notas0910$Porcentaje <- calculaPorcentaje(d <- as.data.frame(notas0910))
+notas1011$Porcentaje <- calculaPorcentaje(d <- as.data.frame(notas1011))
+notas1112$Porcentaje <- calculaPorcentaje(d <- as.data.frame(notas1112))
+notas1213$Porcentaje <- calculaPorcentaje(d <- as.data.frame(notas1213))
+notas1314$Porcentaje <- calculaPorcentaje(d <- as.data.frame(notas1314))
+
+n0910porcent <- as.data.frame(notas0910[, c(1, 4, 11)])
+n1011porcent <- as.data.frame(notas1011[, c(1, 4, 11)])
+n1112porcent <- as.data.frame(notas1112[, c(1, 4, 11)])
+n1213porcent <- as.data.frame(notas1213[, c(1, 4, 11)])
+n1314porcent <- as.data.frame(notas1314[, c(3, 1, 4)])
+
+n0910porcent
+```
+
+```
+##       AÑO      CALIFIC Porcentaje
+## 1 2009-10     Aprobado      34.92
+## 2 2009-10 NoPresentado      36.51
+## 3 2009-10      Notable      12.70
+## 4 2009-10     Suspenso      15.87
+```
+
+```r
+n1011porcent
+```
+
+```
+##        AÑO       CALIFIC Porcentaje
+## 17 2010-11      Aprobado     24.419
+## 18 2010-11  NoPresentado     34.884
+## 19 2010-11       Notable     16.279
+## 20 2010-11 Sobresaliente      1.163
+## 21 2010-11      Suspenso     23.256
+```
+
+```r
+n1112porcent
+```
+
+```
+##        AÑO       CALIFIC Porcentaje
+## 45 2011-12      Aprobado     22.222
+## 46 2011-12  NoPresentado      8.642
+## 47 2011-12       Notable     14.815
+## 48 2011-12 Sobresaliente      1.235
+## 49 2011-12      Suspenso     53.086
+```
+
+```r
+n1213porcent
+```
+
+```
+##        AÑO      CALIFIC Porcentaje
+## 72 2012-13     Aprobado      27.17
+## 73 2012-13 NoPresentado      10.87
+## 74 2012-13      Notable      13.04
+## 75 2012-13     Suspenso      48.91
+```
+
+```r
+n1314porcent
+```
+
+```
+##       AÑO      CALIFIC Porcentaje
+## 1 2013-14     Aprobado     34.211
+## 2 2013-14 NoPresentado      6.579
+## 3 2013-14      Notable     25.000
+## 4 2013-14     Suspenso     34.211
+```
 
 
+
+### Gráficas
+
+```r
 dibuja <- function(d, title) {
-    qplot(CALIFIC, data = d, weight = TOTAL, geom = "bar", binwidth = 1) + theme(axis.text.x = element_text(angle = 45, 
-        hjust = 1)) + ggtitle(title) + xlab("CALIFICACIONES") + ylab("TOTAL")
+    qplot(CALIFIC, data = d, weight = Porcentaje, geom = "bar", binwidth = 1) + 
+        theme(axis.text.x = element_text(angle = 45, hjust = 1)) + ggtitle(title) + 
+        xlab("Calificaciones") + ylab("Porcentajes")
 }
 
 notas0910Plot <- dibuja(d <- as.data.frame(notas0910), "CALIFICACIONES 09-10")
@@ -471,17 +565,18 @@ notas1213Plot <- dibuja(d <- as.data.frame(notas1213), "CALIFICACIONES 12-13")
 notas1314Plot <- dibuja(d <- as.data.frame(notas1314), "CALIFICACIONES 13-14")
 
 grid.arrange(notas0910Plot, notas1011Plot, notas1112Plot, notas1213Plot, notas1314Plot, 
-    as.table = FALSE, main = "Notas Sistemas de Información por años", ncol = 2)
+    as.table = FALSE, main = "Porcentajes de calificaciones de Sistemas de Información", 
+    ncol = 2)
 ```
 
-![plot of chunk unnamed-chunk-17](figure/unnamed-chunk-17.png) 
+![plot of chunk unnamed-chunk-19](figure/unnamed-chunk-19.png) 
 
 
-En las gráficas anteriores, en el último año, en el cual se han utilizado videos docentes y técnicas de aprendizaje activo, además de reflejarse la mejoría general de notas y una diferencia mayor entre el número de **aprobados** respecto a los **suspensos**, es importante apreciar que el número de **No presentados** es sustancialmente inferior. 
+En las gráficas anteriores, el número de Suspensos en los 2 primeros años es inferior al último año pero hay un elevadísimo número de alumnos No presentados, En el curso 13-14 en el cual se han utilizado videos docentes y técnicas de aprendizaje activo, además de reflejarse la mejoría general de notas y una diferencia mayor entre el número de **aprobados** respecto a los **suspensos** y **No presentados**, es importante apreciar que el número de **No presentados** es sustancialmente inferior. 
 
 
 
 
 
 ## CONCLUSIONES
-Tras los análisis realizados podemos afirmar que **si es significativa la mejora que se ha producido en este último año en aquellos grupos en los que se han empleado videos docentes y técnicas de aprendizaje activo**.
+Tras los análisis realizados podemos afirmar que **sí es significativa la mejora que se ha producido en este último año en aquellos grupos en los que se han empleado videos docentes y técnicas de aprendizaje activo**.
