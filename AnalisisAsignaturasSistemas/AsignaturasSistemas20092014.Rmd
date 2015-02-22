@@ -1,9 +1,19 @@
+---
+title: "AsignaturasSistemas"
+author: "Rosa Estriégana"
+date: "Sunday, February 22, 2015"
+output:
+  html_document:
+    keep_md: true
+
+---
+
 # Análisis de notas del primer cuatrimestre del grado G58 Sistemas de información del curso 2009-10 al 2013-14
 
 Realizado por Rosa Estriégana Valdehita
 
 ### Análisis convocatoria enero y junio en conjunto No presentados = 1
-se han realizado otros análisis por separado enero y junio y con No Presentados = 0 sin apenas variación.
+Se han realizado otros análisis por separado enero y junio y con No Presentados = 0 sin apenas variación.
 En el caso de eliminar los No Presentados si existe diferencia pues en el primer año antes de entrar el Plan Bolonia, el nº de No presentados era más elevado por lo que si no se tienen en cuenta la media sube.)
 
 ### Introducción
